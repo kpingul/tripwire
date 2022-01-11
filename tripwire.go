@@ -16,6 +16,12 @@ var (
 	lastAccessTime time.Time
 )
 
+const (
+	FILE_ACCESS = "4663"
+	LOGIN_SUCCESS = "4624"
+	FAILURE = "4625"
+)
+
 func main() {
 	lastAccessTime = time.Now()
 
