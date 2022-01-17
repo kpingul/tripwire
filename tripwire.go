@@ -40,8 +40,11 @@ type EventRecord struct {
 
 
 func main() {
+
+	//set last acces time
 	lastAccessTime = time.Now()
 
+	//open a db connection
 	tripwireDB, errDB = storm.Open("tripwire.db")
 	if errDB != nil {
 		log.Fatal(errDB) 
@@ -49,10 +52,10 @@ func main() {
 
 	defer tripwireDB.Close()
 
-
+	//set scheduler
 	gocron.Every(10).Second().Do(checkFileChanges)
 
-	// Start all the pending jobs
+	// Start all the pending jobs and block app
 	<- gocron.Start()
 }
 
@@ -62,7 +65,6 @@ func main() {
 func checkFileChanges() {
 	fmt.Println("checkFileChanges...")
 	
-	runAndParseEvents()
 
 	fileStat, err := times.Stat("./test.txt")
   	if err != nil {
@@ -75,6 +77,9 @@ func checkFileChanges() {
     	if fileStat.AccessTime().After(lastAccessTime) {
     		fmt.Println("File Access")
     		lastAccessTime = fileStat.AccessTime()
+
+    		//run when file access is triggered
+    		runAndParseEvents()
     	}
 
 }
