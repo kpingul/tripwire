@@ -10,3 +10,5 @@ TODO--
 
 3.Timeline Of the events in sequential order
         -look for JavaScript library 
+
+4.Store findings in local db
