@@ -1,14 +1,14 @@
 TODO--
 
 1.Add file monitoring capability
-	-Access
+	-Access == DONE
 	-Modified
 
 2.Extract data from window security events
+	-4663 File Access == DPME
 	-4624 Login Success
 	-4625 Login Failure
 
-3.Timeline Of the events in sequential order
-        -look for JavaScript library 
+3.Store findings in local db -- DONE
 
-4.Store findings in local db
+4.Show event correlation through tripwire visualizer
