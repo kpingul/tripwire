@@ -30,7 +30,7 @@ const (
 /* Data models */
 
 type EventRecord struct {
-  	ID string `storm:"id"`// primary key
+  	ID  int `storm:"id,increment"` // primary key
   	AccountName string 
   	AccountDomain string 
   	ProcessName string 
@@ -51,7 +51,7 @@ func main() {
 	}
 
 	defer tripwireDB.Close()
-
+	
 	//set scheduler
 	gocron.Every(10).Second().Do(checkFileChanges)
 
@@ -104,22 +104,38 @@ func runAndParseEvents() {
 		//and extract the data we need 
 		reader := bufio.NewReader(pipe)
 		line, err := reader.ReadString('\n')
+		
+		var accountName = ""
+		var accountDomain = ""
+		var processName = ""
+		var accessType = ""
+		
 		for err == nil {
 			if strings.Contains(line, "Account Name") {
-		    		var accountName = strings.Split(line, "Name:")
-		    		fmt.Println("Account Name - " + strings.TrimSpace(accountName[1]))
+				var aName = strings.Split(line, "Name:")
+		    		fmt.Println("Account Name - " + strings.TrimSpace(aName[1]))
+		    		accountName = strings.TrimSpace(aName[1])
 		    	} 
 		    	if strings.Contains(line, "Account Domain") {
-		    		var accountDomain = strings.Split(line, "Domain:")
-		    		fmt.Println("Account Domain - " + strings.TrimSpace(accountDomain[1]))
+		    		var aDomain = strings.Split(line, "Domain:")
+		    		fmt.Println("Account Domain - " + strings.TrimSpace(aDomain[1]))
+		    		accountDomain = strings.TrimSpace(aDomain[1])
 		    	}
 		    	if strings.Contains(line, "Process Name") {
-		    		var processName = strings.Split(line, "Name:")
-		    		fmt.Println("Process Name - " + strings.TrimSpace(processName[1]))
+		    		var pName = strings.Split(line, "Name:")
+		    		fmt.Println("Process Name - " + strings.TrimSpace(pName[1]))
+		    		processName = strings.TrimSpace(pName[1])
 		    	}    
 		    	if strings.Contains(line, "Accesses") {
-		    		var accessType = strings.Split(line, "Accesses:")
-		    		fmt.Println("Access Type - " + strings.TrimSpace(accessType[1]))
+		    		var aType = strings.Split(line, "Accesses:")
+		    		fmt.Println("Access Type - " + strings.TrimSpace(aType[1]))
+		    		accessType = strings.TrimSpace(aType[1])
+		    		storeEventRecord(
+		    			accountName,
+		    			accountDomain,
+		    			processName,
+		    			accessType,
+		    		)
 		    	}
 		    	
 		    	line, err = reader.ReadString('\n')
@@ -134,17 +150,34 @@ func runAndParseEvents() {
 
 
 func storeEventRecord (accountName string, accountDomain string, processName string, aType string) {
-
-	//store in db
-	errSave := tripwireDB.Save(&EventRecord{
+	fmt.Println("storing event record")
+ 	record := EventRecord{
 		AccountName: accountName, 
 	  	AccountDomain: accountDomain,
 	  	ProcessName: processName, 
 	  	ProcessPath: processName, 
 	  	AccessType: aType,
-	})
+	}
+
+	fmt.Println(record)
+
+
+	//store in db
+	errSave := tripwireDB.Save(&record)
 	if errSave != nil {
 		log.Fatal(errSave)
+	}
+
+}
+
+
+func getAllEventRecords () {
+
+	var records []EventRecord
+
+	errFetch := tripwireDB.All(&records)
+	if errFetch != nil {
+		log.Fatal(errFetch)
 	}
 
 }
