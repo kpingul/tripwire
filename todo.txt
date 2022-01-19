@@ -12,3 +12,5 @@ TODO--
 3.Store findings in local db -- DONE
 
 4.Show event correlation through tripwire visualizer
+	-create a web server for frontend 
+	
