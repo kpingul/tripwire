@@ -8,6 +8,7 @@ import (
   	"strings"
   	"log"
   	"net/http"
+  	"encoding/json"
   	"github.com/djherbis/times"
   	"github.com/jasonlvhit/gocron"
   	"github.com/asdine/storm/v3"
@@ -61,17 +62,28 @@ func main() {
 	gocron.Start()
 
 	//setup http web server and API's
-    	fileServer := http.FileServer(http.Dir("./frontend")) // New code
-    	http.Handle("/", fileServer) // New code
-	http.HandleFunc("/api/test", test)
+    	fileServer := http.FileServer(http.Dir("./frontend")) 
+    	http.Handle("/", fileServer) 
+	http.HandleFunc("/api/records", getRecords)
 	http.ListenAndServe(":8090", nil)
 
 }
 
-func test(w http.ResponseWriter, req *http.Request) {
+/* REST API */
 
-   	fmt.Fprintf(w, "hello\n")
+func getRecords(w http.ResponseWriter, req *http.Request) {
+
+	records := getAllEventRecords()
+
+	jsonData, err := json.Marshal(records)
+	if err != nil {
+	    log.Fatal(err)
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsonData)
+   	
 }
+
 
 /* Utility */
 
@@ -161,6 +173,7 @@ func runAndParseEvents() {
 
 }
 
+/* DB  Management */
 
 func storeEventRecord (accountName string, accountDomain string, processName string, aType string) {
 	fmt.Println("storing event record")
@@ -174,7 +187,6 @@ func storeEventRecord (accountName string, accountDomain string, processName str
 
 	fmt.Println(record)
 
-
 	//store in db
 	errSave := tripwireDB.Save(&record)
 	if errSave != nil {
@@ -184,13 +196,16 @@ func storeEventRecord (accountName string, accountDomain string, processName str
 }
 
 
-func getAllEventRecords () {
+func getAllEventRecords () []EventRecord{
 
 	var records []EventRecord
 
 	errFetch := tripwireDB.All(&records)
 	if errFetch != nil {
 		log.Fatal(errFetch)
+		return records
+	} else {
+		return records
 	}
 
 }
