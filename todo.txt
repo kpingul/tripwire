@@ -14,4 +14,6 @@ TODO--
 4.Show event correlation through tripwire visualizer
 	-create a web server for frontend  -- DONE
 	-update frontend to get data dynamically
+
+5.Serve over HTTPS
 	
