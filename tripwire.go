@@ -7,6 +7,7 @@ import (
 	"os/exec"
   	"strings"
   	"log"
+  	"net/http"
   	"github.com/djherbis/times"
   	"github.com/jasonlvhit/gocron"
   	"github.com/asdine/storm/v3"
@@ -44,6 +45,7 @@ func main() {
 	//set last acces time
 	lastAccessTime = time.Now()
 
+
 	//open a db connection
 	tripwireDB, errDB = storm.Open("tripwire.db")
 	if errDB != nil {
@@ -56,9 +58,20 @@ func main() {
 	gocron.Every(10).Second().Do(checkFileChanges)
 
 	// Start all the pending jobs and block app
-	<- gocron.Start()
+	gocron.Start()
+
+	//setup http web server and API's
+    	fileServer := http.FileServer(http.Dir("./frontend")) // New code
+    	http.Handle("/", fileServer) // New code
+	http.HandleFunc("/api/test", test)
+	http.ListenAndServe(":8090", nil)
+
 }
 
+func test(w http.ResponseWriter, req *http.Request) {
+
+   	fmt.Fprintf(w, "hello\n")
+}
 
 /* Utility */
 
