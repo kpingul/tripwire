@@ -14,7 +14,11 @@ TODO--
 4.Show event correlation through tripwire visualizer
 	-create a web server for frontend  -- DONE
 	-update frontend to get data dynamically -- DONE
-	-massage data so we can feed it into the cytoscape configs
+	-massage data so we can feed it into the cytoscape configs -- DONE
+
+5.Add more events
+	-4624 Login Success
+	-4625 Login Failure
 
 5.Serve over HTTPS
 	
