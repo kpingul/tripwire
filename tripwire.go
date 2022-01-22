@@ -109,15 +109,15 @@ func checkFileChanges() {
     		lastAccessTime = fileStat.AccessTime()
 
     		//run when file access is triggered
-    		runAndParseEvents()
+    		runAndParseFileAccessEvents()
     	}
 
 }
 
-func runAndParseEvents() {
+func runAndParseFileAccessEvents() {
 	if !runningState {
 
-		fmt.Println("runAndParseEvents..")
+		fmt.Println("runAndParseFileAccessEvents..")
 
 		//set current state of parser
 		runningState = true
@@ -213,6 +213,35 @@ func runAndParseEvents() {
 		fmt.Println(" DONE RUNNING PARSER")
 		runningState = false
 	}
+	
+
+}
+func runAndParseLogonEvents() {
+
+	fmt.Println("runAndParseLogonEvents..")
+
+	//using wevtutil to extract windows event ID's
+	//4624 = logon success event	
+	//4625 = logon failure event	
+   	cmd := exec.Command("cmd", "/C", "wevtutil", "qe", "Security", "/q:*[System [(EventID=4624)]]", "/format:text")
+	pipe, _ := cmd.StdoutPipe()
+	if err := cmd.Start(); err != nil {
+		fmt.Println(err)
+	}
+
+		
+	//create a reader to iterate through findings
+	//and extract the data we need 
+	reader := bufio.NewReader(pipe)
+	line, err := reader.ReadString('\n')
+
+	//scan through output
+	for err == nil {
+		fmt.Println(line)
+	    	line, err = reader.ReadString('\n')
+	}
+
+	fmt.Println(" DONE RUNNING PARSER")
 	
 
 }
