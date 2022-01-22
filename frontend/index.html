@@ -47,6 +47,166 @@
                                         //parse JSON datax`x
                                         data = JSON.parse(xhr.responseText)
                                         console.log(data)
+
+                                        if ( data.length > 0 ) {
+                                                var     nodes = [],
+                                                        edges = [];
+
+                                                data.forEach( (node, idx) => {
+                                                        if ( idx == 0 ) {
+                                                                //Account  Domain
+                                                                if ( node.hasOwnProperty("AccountDomain") ) {
+                                                                        nodes.push({
+                                                                                data: {
+                                                                                        id: node.AccountDomain,
+                                                                                        label: node.AccountDomain,
+                                                                                        shape: "diamond",
+                                                                                }
+                                                                        })
+                                                                }
+                                                                
+                                                                //User
+                                                                if ( node.hasOwnProperty("AccountName") ) {
+                                                                        nodes.push({
+                                                                                data: {
+                                                                                        id: node.AccountName,
+                                                                                        label: node.AccountName,
+                                                                                        shape: "circle",
+                                                                                }
+                                                                        })
+                                                                }
+
+
+
+                                                                //Process Name
+                                                                if ( node.hasOwnProperty("ProcessName") ) {
+                                                                        nodes.push({
+                                                                                data: {
+                                                                                        id: node.ProcessName,
+                                                                                        label: node.ProcessName,
+                                                                                        shape: "square",
+                                                                                }
+                                                                        })
+                                                                }
+
+
+                                                                //file Name
+                                                                if ( node.hasOwnProperty("ObjectName") ) {
+                                                                        nodes.push({
+                                                                                data: {
+                                                                                        id: node.ObjectName,
+                                                                                        label: node.ObjectName,
+                                                                                        shape: "tag",
+                                                                                }
+                                                                        })
+                                                                }
+
+
+
+                                                                //domain to user
+                                                                edges.push({
+                                                                        data: {
+                                                                                id: node.ID + "a",
+                                                                                weight: 1,
+                                                                                source: node.AccountDomain,
+                                                                                target: node.AccountName,
+                                                                                label: "",
+                                                                        }
+                                                                })
+
+                                                                //user to process
+                                                                edges.push({
+                                                                        data: {
+                                                                                id: node.ID + "b",
+                                                                                weight: 1,
+                                                                                source: node.AccountName,
+                                                                                target: node.ProcessName,
+                                                                                label: "",
+                                                                        }
+                                                                })                                        
+
+
+                                                                //process to file
+
+                                                                edges.push({
+                                                                        data: {
+                                                                                id: node.ID + "c",
+                                                                                weight: 1,
+                                                                                source: node.ProcessName,
+                                                                                target: node.ObjectName,
+                                                                                label: "",
+                                                                        }
+                                                                })        
+
+                                                        }
+
+
+
+                                                })
+                                                console.log(nodes)                                
+                                                console.log(edges)                                
+                                           
+                                                var cy = cytoscape({
+                                                        container: document.getElementById('cy'),
+                                                        boxSelectionEnabled: false,
+                                                        autounselectify: true,
+                                                        style:  cytoscape.stylesheet()
+                                                                .selector('node')
+                                                                .style({
+                                                                        'content': 'data(label)',
+                                                                        'width': '20',
+                                                                        'height': '20',
+                                                                        // 'shape': 'data(shape)',
+                                                                        'font-size': '11',
+                                                                        "text-valign": "top",
+                                                                        "text-halign": "center"
+                                                                })
+                                                                .selector('edge')
+                                                                .style({
+                                                                        'content': 'data(label)',
+                                                                        'font-size': '8',
+                                                                        'curve-style': 'bezier',
+                                                                         "edge-text-rotation": "autorotate",
+                                                                        'target-arrow-shape': 'triangle',
+                                                                        'width': 2,
+                                                                        'line-color': '#ddd',
+                                                                        'target-arrow-color': '#ddd'
+                                                                })
+                                                                .selector('.highlighted')
+                                                                .style({
+                                                                        'background-color': '#D2042D',
+                                                                        'line-color': '#B0C4DE ',
+                                                                        'target-arrow-color': '#B0C4DE ',
+                                                                        'transition-property': 'background-color, line-color, target-arrow-color',
+                                                                        'transition-duration': '0.5s'
+                                                                }),
+                                                                elements: {
+                                                                        nodes: nodes,
+                                                                        edges: edges
+                                                                },
+
+                                                                layout: {
+                                                                                name: 'breadthfirst',
+                                                                                directed: true,
+                                                                                padding: 10
+                                                                }
+                                                        });
+
+                                                var bfs = cy.elements().bfs('#a', function(){}, true);
+
+                                                var i = 0;
+                                                var highlightNextEle = function(){
+                                                        if( i < bfs.path.length ){
+                                                                bfs.path[i].addClass('highlighted');
+                                                                i++;
+                                                                setTimeout(highlightNextEle, 1000);
+                                                        }
+                                                };
+
+                                                
+                                                // kick off first highlight
+                                                highlightNextEle();
+                                        }
                                 } else if (xhr.status === 404) {
                                         console.log("No records found")
                                 }
@@ -57,82 +217,6 @@
                                 console.log("Network error occurred")
                         }
 
-                        var cy = cytoscape({
-                                container: document.getElementById('cy'),
-                                boxSelectionEnabled: false,
-                                autounselectify: true,
-                                style:  cytoscape.stylesheet()
-                                        .selector('node')
-                                        .style({
-                                                'content': 'data(label)',
-                                                'width': '20',
-                                                'height': '20',
-                                                // 'shape': 'data(shape)',
-                                                'font-size': '11',
-                                                "text-valign": "top",
-                                                "text-halign": "center"
-                                        })
-                                        .selector('edge')
-                                        .style({
-                                                'content': 'data(label)',
-                                                'font-size': '8',
-                                                'curve-style': 'bezier',
-                                                 "edge-text-rotation": "autorotate",
-                                                'target-arrow-shape': 'triangle',
-                                                'width': 2,
-                                                'line-color': '#ddd',
-                                                'target-arrow-color': '#ddd'
-                                        })
-                                        .selector('.highlighted')
-                                        .style({
-                                                'background-color': '#D2042D',
-                                                'line-color': '#B0C4DE ',
-                                                'target-arrow-color': '#B0C4DE ',
-                                                'transition-property': 'background-color, line-color, target-arrow-color',
-                                                'transition-duration': '0.5s'
-                                        }),
-                                        elements: {
-                                                nodes:  [
-                                                        { data: { id: 'a', label:"kelly.win", shape: 'circle'  } },
-                                                        { data: { id: 'b', label:"jason.win", shape: 'circle' } },
-                                                        { data: { id: 'c', label:"win_10", shape: 'diamond' } },
-                                                        { data: { id: 'd', label:"password.txt", shape: 'tag' } },
-                                                        ],
-
-                                                edges:  [
-                                                        { data: { id: '1', weight: 1, source: 'a', target: 'c', label: "4624" } },
-                                                        { data: { id: '2', weight: 1, source: 'a', target: 'c', label: "4625" } },
-                                                        { data: { id: '3', weight: 1, source: 'a', target: 'c', label: "4625" } },
-                                                        { data: { id: '4', weight: 1, source: 'a', target: 'c', label: "4625" } },
-                                                        { data: { id: '5', weight: 1, source: 'a', target: 'c', label: "4625" } },
-                                                        { data: { id: '6', weight: 1, source: 'a', target: 'c', label: "4625" } },
-                                                        { data: { id: '7', weight: 3, source: 'b', target: 'c', label: "4625" } },
-                                                        { data: { id: '8', weight: 3, source: 'b', target: 'c', label: "4625" } },
-                                                        { data: { id: '9', weight: 3, source: 'c', target: 'd', label: "file access" } },
-                                                ]
-                                        },
-
-                                        layout: {
-                                                        name: 'breadthfirst',
-                                                        directed: true,
-                                                        padding: 10
-                                        }
-                                });
-
-                        var bfs = cy.elements().bfs('#a', function(){}, true);
-
-                        var i = 0;
-                        var highlightNextEle = function(){
-                                if( i < bfs.path.length ){
-                                        bfs.path[i].addClass('highlighted');
-                                        i++;
-                                        setTimeout(highlightNextEle, 1000);
-                                }
-                        };
-
-                        
-                        // kick off first highlight
-                        highlightNextEle();
 
                 </script>
         </body>
