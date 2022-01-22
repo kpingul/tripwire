@@ -33,6 +33,7 @@ const (
 
 type EventRecord struct {
   	ID  int `storm:"id,increment"` // primary key
+  	EventID string 
   	AccountName string 
   	AccountDomain string 
   	ObjectType string 
@@ -116,6 +117,7 @@ func runAndParseEvents() {
 
 		fmt.Println("runAndParseEvents..")
 
+		//set current state of parser
 		runningState = true
 
 		//using wevtutil to extract windows event ID's
@@ -169,14 +171,19 @@ func runAndParseEvents() {
 		    		var aType = strings.Split(line, "Accesses:")
 		    		fmt.Println("Access Type - " + strings.TrimSpace(aType[1]))
 		    		accessType = strings.TrimSpace(aType[1])
-		    		storeEventRecord(
-		    			accountName,
-		    			accountDomain,
-		    			objectType,
-		    			objectName,
-		    			processName,
-		    			accessType,
-		    		)
+
+		    		//only intreseted in file types and not processes for now..
+		    		if objectType == "File" {
+			    		storeEventRecord(
+			    			"4663",
+			    			accountName,
+			    			accountDomain,
+			    			objectType,
+			    			objectName,
+			    			processName,
+			    			accessType,
+			    		)
+		    		}
 		    	}
 		    	
 		    	line, err = reader.ReadString('\n')
@@ -191,9 +198,10 @@ func runAndParseEvents() {
 
 /* DB  Management */
 
-func storeEventRecord (accountName string, accountDomain string, objectType string, objectName string, processName string, aType string) {
+func storeEventRecord (eventID string, accountName string, accountDomain string, objectType string, objectName string, processName string, aType string) {
 	fmt.Println("storing event record")
  	record := EventRecord{
+ 		EventID : eventID,
 		AccountName: accountName, 
 	  	AccountDomain: accountDomain,
 	  	ObjectType: objectType,
