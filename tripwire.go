@@ -35,6 +35,8 @@ type EventRecord struct {
   	ID  int `storm:"id,increment"` // primary key
   	AccountName string 
   	AccountDomain string 
+  	ObjectType string 
+  	ObjectName string 
   	ProcessName string 
   	ProcessPath string 
   	AccessType string 
@@ -132,6 +134,8 @@ func runAndParseEvents() {
 		
 		var accountName = ""
 		var accountDomain = ""
+		var objectName = ""
+		var objectType = ""
 		var processName = ""
 		var accessType = ""
 		
@@ -146,6 +150,16 @@ func runAndParseEvents() {
 		    		fmt.Println("Account Domain - " + strings.TrimSpace(aDomain[1]))
 		    		accountDomain = strings.TrimSpace(aDomain[1])
 		    	}
+		    	if strings.Contains(line, "Object Type") {
+				var oType = strings.Split(line, "Type:")
+		    		fmt.Println("Object Type - " + strings.TrimSpace(oType[1]))
+		    		objectType = strings.TrimSpace(oType[1])
+		    	} 
+		    	if strings.Contains(line, "Object Name") {
+		    		var oName = strings.Split(line, "Name:")
+		    		fmt.Println("Object Name - " + strings.TrimSpace(oName[1]))
+		    		objectName = strings.TrimSpace(oName[1])
+		    	}
 		    	if strings.Contains(line, "Process Name") {
 		    		var pName = strings.Split(line, "Name:")
 		    		fmt.Println("Process Name - " + strings.TrimSpace(pName[1]))
@@ -158,6 +172,8 @@ func runAndParseEvents() {
 		    		storeEventRecord(
 		    			accountName,
 		    			accountDomain,
+		    			objectType,
+		    			objectName,
 		    			processName,
 		    			accessType,
 		    		)
@@ -175,11 +191,13 @@ func runAndParseEvents() {
 
 /* DB  Management */
 
-func storeEventRecord (accountName string, accountDomain string, processName string, aType string) {
+func storeEventRecord (accountName string, accountDomain string, objectType string, objectName string, processName string, aType string) {
 	fmt.Println("storing event record")
  	record := EventRecord{
 		AccountName: accountName, 
 	  	AccountDomain: accountDomain,
+	  	ObjectType: objectType,
+	  	ObjectName: objectName,
 	  	ProcessName: processName, 
 	  	ProcessPath: processName, 
 	  	AccessType: aType,
