@@ -135,6 +135,7 @@ func runAndParseEvents() {
 		reader := bufio.NewReader(pipe)
 		line, err := reader.ReadString('\n')
 		
+		//creating event record variables 	
 		var accountName = ""
 		var accountDomain = ""
 		var objectName = ""
@@ -144,6 +145,8 @@ func runAndParseEvents() {
 		var processPath = ""
 		var accessType = ""
 		
+
+		//scan through output
 		for err == nil {
 			if strings.Contains(line, "Account Name") {
 				var aName = strings.Split(line, "Name:")
@@ -178,9 +181,11 @@ func runAndParseEvents() {
 		    		//only intreseted in file types and not processes for now..
 		    		if objectType == "File" {
 
+		    			//extracting other fields 
 		    			objectName = strings.Split(objectPath, "\\")[len(strings.Split(objectPath, "\\"))-1]
 		    			processName = strings.Split(processPath, "\\")[len(strings.Split(processPath, "\\"))-1]
 
+		    			//store records
 			    		storeEventRecord(
 			    			"4663",
 			    			accountName,
