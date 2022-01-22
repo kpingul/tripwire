@@ -34,6 +34,7 @@ const (
 type EventRecord struct {
   	ID  int `storm:"id,increment"` // primary key
   	EventID string 
+  	TimeStamp string 
   	AccountName string 
   	AccountDomain string 
   	ObjectType string 
@@ -136,6 +137,7 @@ func runAndParseEvents() {
 		line, err := reader.ReadString('\n')
 		
 		//creating event record variables 	
+		var timeStamp = ""
 		var accountName = ""
 		var accountDomain = ""
 		var objectName = ""
@@ -148,7 +150,12 @@ func runAndParseEvents() {
 
 		//scan through output
 		for err == nil {
-			if strings.Contains(line, "Account Name") {
+			if strings.Contains(line, "Date") {
+				var tstamp = strings.Split(line, "Date:")
+		    		fmt.Println("Date - " + strings.TrimSpace(tstamp[1]))
+		    		timeStamp = strings.TrimSpace(tstamp[1])
+		    	} 
+		    	if strings.Contains(line, "Account Name") {
 				var aName = strings.Split(line, "Name:")
 		    		fmt.Println("Account Name - " + strings.TrimSpace(aName[1]))
 		    		accountName = strings.TrimSpace(aName[1])
@@ -167,27 +174,27 @@ func runAndParseEvents() {
 		    		var oPath = strings.Split(line, "Name:")
 		    		fmt.Println("Object Name - " + strings.TrimSpace(oPath[1]))
 		    		objectPath = strings.TrimSpace(oPath[1])
+		    		objectName = strings.Split(objectPath, "\\")[len(strings.Split(objectPath, "\\"))-1]
 		    	}
 		    	if strings.Contains(line, "Process Name") {
 		    		var pPath = strings.Split(line, "Name:")
 		    		fmt.Println("Process Name - " + strings.TrimSpace(pPath[1]))
 		    		processPath = strings.TrimSpace(pPath[1])
+		    		processName = strings.Split(processPath, "\\")[len(strings.Split(processPath, "\\"))-1]
 		    	}    
 		    	if strings.Contains(line, "Accesses") {
 		    		var aType = strings.Split(line, "Accesses:")
 		    		fmt.Println("Access Type - " + strings.TrimSpace(aType[1]))
 		    		accessType = strings.TrimSpace(aType[1])
 
-		    		//only intreseted in file types and not processes for now..
-		    		if objectType == "File" {
-
-		    			//extracting other fields 
-		    			objectName = strings.Split(objectPath, "\\")[len(strings.Split(objectPath, "\\"))-1]
-		    			processName = strings.Split(processPath, "\\")[len(strings.Split(processPath, "\\"))-1]
+		    		//only intreseted in file types and not our own application since it
+		    		//does the checking of the file itself
+		    		if objectType == "File" && processName != "tripwire.exe" {
 
 		    			//store records
 			    		storeEventRecord(
 			    			"4663",
+			    			timeStamp,
 			    			accountName,
 			    			accountDomain,
 			    			objectType,
@@ -212,10 +219,11 @@ func runAndParseEvents() {
 
 /* DB  Management */
 
-func storeEventRecord (eventID string, accountName string, accountDomain string, objectType string, objectName string, objectPath string, processName string, processPath string,  aType string) {
+func storeEventRecord (eventID string, timeStamp string,  accountName string, accountDomain string, objectType string, objectName string, objectPath string, processName string, processPath string,  aType string) {
 	fmt.Println("storing event record")
  	record := EventRecord{
  		EventID : eventID,
+ 		TimeStamp : timeStamp,
 		AccountName: accountName, 
 	  	AccountDomain: accountDomain,
 	  	ObjectType: objectType,
