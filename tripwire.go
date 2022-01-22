@@ -38,6 +38,7 @@ type EventRecord struct {
   	AccountDomain string 
   	ObjectType string 
   	ObjectName string 
+  	ObjectPath string 
   	ProcessName string 
   	ProcessPath string 
   	AccessType string 
@@ -138,7 +139,9 @@ func runAndParseEvents() {
 		var accountDomain = ""
 		var objectName = ""
 		var objectType = ""
+		var objectPath = ""
 		var processName = ""
+		var processPath = ""
 		var accessType = ""
 		
 		for err == nil {
@@ -158,14 +161,14 @@ func runAndParseEvents() {
 		    		objectType = strings.TrimSpace(oType[1])
 		    	} 
 		    	if strings.Contains(line, "Object Name") {
-		    		var oName = strings.Split(line, "Name:")
-		    		fmt.Println("Object Name - " + strings.TrimSpace(oName[1]))
-		    		objectName = strings.TrimSpace(oName[1])
+		    		var oPath = strings.Split(line, "Name:")
+		    		fmt.Println("Object Name - " + strings.TrimSpace(oPath[1]))
+		    		objectPath = strings.TrimSpace(oPath[1])
 		    	}
 		    	if strings.Contains(line, "Process Name") {
-		    		var pName = strings.Split(line, "Name:")
-		    		fmt.Println("Process Name - " + strings.TrimSpace(pName[1]))
-		    		processName = strings.TrimSpace(pName[1])
+		    		var pPath = strings.Split(line, "Name:")
+		    		fmt.Println("Process Name - " + strings.TrimSpace(pPath[1]))
+		    		processPath = strings.TrimSpace(pPath[1])
 		    	}    
 		    	if strings.Contains(line, "Accesses") {
 		    		var aType = strings.Split(line, "Accesses:")
@@ -174,13 +177,19 @@ func runAndParseEvents() {
 
 		    		//only intreseted in file types and not processes for now..
 		    		if objectType == "File" {
+
+		    			objectName = strings.Split(objectPath, "\\")[len(strings.Split(objectPath, "\\"))-1]
+		    			processName = strings.Split(processPath, "\\")[len(strings.Split(processPath, "\\"))-1]
+
 			    		storeEventRecord(
 			    			"4663",
 			    			accountName,
 			    			accountDomain,
 			    			objectType,
 			    			objectName,
+			    			objectPath,
 			    			processName,
+			    			processPath,
 			    			accessType,
 			    		)
 		    		}
@@ -198,7 +207,7 @@ func runAndParseEvents() {
 
 /* DB  Management */
 
-func storeEventRecord (eventID string, accountName string, accountDomain string, objectType string, objectName string, processName string, aType string) {
+func storeEventRecord (eventID string, accountName string, accountDomain string, objectType string, objectName string, objectPath string, processName string, processPath string,  aType string) {
 	fmt.Println("storing event record")
  	record := EventRecord{
  		EventID : eventID,
@@ -206,8 +215,9 @@ func storeEventRecord (eventID string, accountName string, accountDomain string,
 	  	AccountDomain: accountDomain,
 	  	ObjectType: objectType,
 	  	ObjectName: objectName,
+	  	ObjectPath: objectPath,
 	  	ProcessName: processName, 
-	  	ProcessPath: processName, 
+	  	ProcessPath: processPath, 
 	  	AccessType: aType,
 	}
 
