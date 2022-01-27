@@ -223,7 +223,7 @@ func runAndParseLogonEvents() {
 	//using wevtutil to extract windows event ID's
 	//4624 = logon success event	
 	//4625 = logon failure event	
-   	cmd := exec.Command("cmd", "/C", "wevtutil", "qe", "Security", "/q:*[System [(EventID=4624)]]", "/format:text")
+   	cmd := exec.Command("cmd", "/C", "wevtutil", "qe", "Security", "/q:*[System [(EventID=4624) or (EventID=4625)]]", "/format:text")
 	pipe, _ := cmd.StdoutPipe()
 	if err := cmd.Start(); err != nil {
 		fmt.Println(err)
