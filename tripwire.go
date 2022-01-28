@@ -152,39 +152,39 @@ func runAndParseFileAccessEvents() {
 
 		//scan through output
 		for err == nil {
-			if strings.Contains(line, "Date") {
+			if strings.Contains(line, "Date:") {
 				var tstamp = strings.Split(line, "Date:")
 		    		fmt.Println("Date - " + strings.TrimSpace(tstamp[1]))
 		    		timeStamp = strings.TrimSpace(tstamp[1])
 		    	} 
-		    	if strings.Contains(line, "Account Name") {
+		    	if strings.Contains(line, "Account Name:") {
 				var aName = strings.Split(line, "Name:")
 		    		fmt.Println("Account Name - " + strings.TrimSpace(aName[1]))
 		    		accountName = strings.TrimSpace(aName[1])
 		    	} 
-		    	if strings.Contains(line, "Account Domain") {
+		    	if strings.Contains(line, "Account Domain:") {
 		    		var aDomain = strings.Split(line, "Domain:")
 		    		fmt.Println("Account Domain - " + strings.TrimSpace(aDomain[1]))
 		    		accountDomain = strings.TrimSpace(aDomain[1])
 		    	}
-		    	if strings.Contains(line, "Object Type") {
+		    	if strings.Contains(line, "Object Type:") {
 				var oType = strings.Split(line, "Type:")
 		    		fmt.Println("Object Type - " + strings.TrimSpace(oType[1]))
 		    		objectType = strings.TrimSpace(oType[1])
 		    	} 
-		    	if strings.Contains(line, "Object Name") {
+		    	if strings.Contains(line, "Object Name:") {
 		    		var oPath = strings.Split(line, "Name:")
 		    		fmt.Println("Object Name - " + strings.TrimSpace(oPath[1]))
 		    		objectPath = strings.TrimSpace(oPath[1])
 		    		objectName = strings.Split(objectPath, "\\")[len(strings.Split(objectPath, "\\"))-1]
 		    	}
-		    	if strings.Contains(line, "Process Name") {
+		    	if strings.Contains(line, "Process Name:") {
 		    		var pPath = strings.Split(line, "Name:")
 		    		fmt.Println("Process Name - " + strings.TrimSpace(pPath[1]))
 		    		processPath = strings.TrimSpace(pPath[1])
 		    		processName = strings.Split(processPath, "\\")[len(strings.Split(processPath, "\\"))-1]
 		    	}    
-		    	if strings.Contains(line, "Accesses") {
+		    	if strings.Contains(line, "Accesses:") {
 		    		var aType = strings.Split(line, "Accesses:")
 		    		fmt.Println("Access Type - " + strings.TrimSpace(aType[1]))
 		    		accessType = strings.TrimSpace(aType[1])
