@@ -48,6 +48,8 @@ type EventRecord struct {
 
 func main() {
 
+	runAndParseLogonEvents()
+
 	//set last acces time
 	lastAccessTime = time.Now()
 
@@ -229,15 +231,24 @@ func runAndParseLogonEvents() {
 		fmt.Println(err)
 	}
 
-		
 	//create a reader to iterate through findings
 	//and extract the data we need 
 	reader := bufio.NewReader(pipe)
 	line, err := reader.ReadString('\n')
 
+	var logonType = ""
+
 	//scan through output
 	for err == nil {
 		fmt.Println(line)
+
+		//logon type other than 5 (which denotes a service startup) is a red flag
+		if strings.Contains(line, "Logon Type:") {
+			var lType = strings.Split(line, "Type:")
+	    		fmt.Println("Logon Type - " + strings.TrimSpace(lType[1]))
+	    		logonType = strings.TrimSpace(lType[1])
+	    	} 
+	    	
 	    	line, err = reader.ReadString('\n')
 	}
 
