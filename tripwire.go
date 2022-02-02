@@ -194,7 +194,7 @@ func runAndParseFileAccessEvents() {
 		    		if objectType == "File" && processName != "tripwire.exe" {
 
 		    			//store records
-			    		storeEventRecord(
+			    		storeFileAccessRecord(
 			    			"4663",
 			    			timeStamp,
 			    			accountName,
@@ -236,18 +236,55 @@ func runAndParseLogonEvents() {
 	reader := bufio.NewReader(pipe)
 	line, err := reader.ReadString('\n')
 
+	var eventID = ""
 	var logonType = ""
+	var timeStamp = ""
+	var accountDomain = ""
+	var accountName = ""
 
 	//scan through output
 	for err == nil {
-		fmt.Println(line)
+		if strings.Contains(line, "Date:") {
+			var tstamp = strings.Split(line, "Date:")
+	    		// fmt.Println("Date - " + strings.TrimSpace(tstamp[1]))
+	    		timeStamp = strings.TrimSpace(tstamp[1])
+	    	} 
+	    	if strings.Contains(line, "Event ID:") {
+			var eID = strings.Split(line, "ID:")
+	    		// fmt.Println("Date - " + strings.TrimSpace(eID[1]))
+	    		eventID = strings.TrimSpace(eID[1])
+	    	} 
+	    	if strings.Contains(line, "Account Name:") && !( strings.Contains(line, "Network Account Name:")) {
+			var aName = strings.Split(line, "Name:")
+	    		// fmt.Println("Account Name - " + strings.TrimSpace(aName[1]))
+	    		accountName = strings.TrimSpace(aName[1])
+	    	} 
+	    	if strings.Contains(line, "Account Domain:") && !( strings.Contains(line, "Network Account Domain:")) {
+	    		var aDomain = strings.Split(line, "Domain:")
+	    		// fmt.Println("Account Domain - " + strings.TrimSpace(aDomain[1]))
+	    		accountDomain = strings.TrimSpace(aDomain[1])
+	    	}
 
 		//logon type other than 5 (which denotes a service startup) is a red flag
 		if strings.Contains(line, "Logon Type:") {
 			var lType = strings.Split(line, "Type:")
-	    		fmt.Println("Logon Type - " + strings.TrimSpace(lType[1]))
+	    		// fmt.Println("Logon Type - " + strings.TrimSpace(lType[1]))
 	    		logonType = strings.TrimSpace(lType[1])
 	    	} 
+
+	    	if strings.Contains(line, "Network Information:") {
+	    		
+	    		if logonType != "5" {
+	    			//store records
+		    		storeAccountLogonRecord(
+		    			eventID,
+		    			timeStamp,
+		    			accountName,
+		    			accountDomain,
+		    		)
+	    		}
+
+	    	}
 	    	
 	    	line, err = reader.ReadString('\n')
 	}
@@ -259,7 +296,7 @@ func runAndParseLogonEvents() {
 
 /* DB  Management */
 
-func storeEventRecord (eventID string, timeStamp string,  accountName string, accountDomain string, objectType string, objectName string, objectPath string, processName string, processPath string,  aType string) {
+func storeFileAccessRecord (eventID string, timeStamp string,  accountName string, accountDomain string, objectType string, objectName string, objectPath string, processName string, processPath string,  aType string) {
 	fmt.Println("storing event record")
  	record := EventRecord{
  		EventID : eventID,
@@ -272,6 +309,25 @@ func storeEventRecord (eventID string, timeStamp string,  accountName string, ac
 	  	ProcessName: processName, 
 	  	ProcessPath: processPath, 
 	  	AccessType: aType,
+	}
+
+	fmt.Println(record)
+
+	//store in db
+	errSave := tripwireDB.Save(&record)
+	if errSave != nil {
+		log.Fatal(errSave)
+	}
+
+}
+
+func storeAccountLogonRecord (eventID string, timeStamp string,  accountName string, accountDomain string ) {
+	fmt.Println("storing event record")
+ 	record := EventRecord{
+ 		EventID : eventID,
+ 		TimeStamp : timeStamp,
+		AccountName: accountName, 
+	  	AccountDomain: accountDomain,
 	}
 
 	fmt.Println(record)
