@@ -4,7 +4,7 @@ File monitoring with a touch of UEBA
 
 ## Another Tripwire ?
 
-This project was inspired by learning about how attackers move laterally in an environment. Always on the move looking for credentials, PII, and other data critical to the organization on a system. By creating a tripwire, we can get some true positives. That someone is accessing an asset that they aren't suppose to. And by adding UEBA around this, you can build more context around their movements. So for example, which user account did they use to access the file? When did they login to this machine? Some failed login attempts? Or maybe this was the initial system that was compromised? Nonetheless, with this evidence, IR and SOC teams can use this evidence for further investigations. List could go on depending what can we extract from a windows machine, but for now, this will do. 
+This project was inspired by learning how attackers move laterally in an environment. Always on the move looking for credentials, PII, and other data critical to the organization. By creating a tripwire, we can get some true positives. That someone is accessing a file that they aren’t supposed to. So essentially, I’ve built a file integrity monitoring module to help detect some of these events. In addition, I’ve incorporated windows event logs to provide us with more contextual data. For example, with event id 4663, we can determine what process was involved in opening the file and possibly what account they used and the domain they are in. And with event id 4624 and 4625, we can now see when they’ve logged into that account and from which machine if not coming from the compromised host. And with this evidence, IR and SOC teams can use this evidence for further investigations. 
 
 ## Tripwire Visualizer
 
