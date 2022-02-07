@@ -18,69 +18,121 @@ xhr.onload = function() {
                 console.log(data)
 
                 if ( data.length > 0 ) {
-                        var     nodes = [],
+                        var     nodesObj = {},
+                                nodes = [],
                                 edges = [];
 
                         data.forEach( (node, idx) => {
-                                if ( idx == 0 ) {
-                                        Object.keys(node).forEach( (key, val) => {
-                                                nodes.push(
-                                                        createNode ("AccountDomain", node )
-                                                )
-                                                nodes.push(
-                                                        createNode ("AccountName", node )
-                                                )
-                                                nodes.push(
-                                                        createNode ("ProcessName", node )
-                                                )
-                                                nodes.push(
-                                                        createNode ("ObjectName", node )
-                                                )
-
-
-                                                //need to refactor this similar to above..
-                                                edges.push({
+                                if ( idx == 0 ) { 
+                                        nodesObj[node.AccountDomain] = {
+                                                data: {
+                                                        id: node.AccountDomain,
+                                                        label: node.AccountDomain,
+                                                        shape: "diamond"
+                                                }
+                                        }
+                                        nodes.push(
+                                                {
                                                         data: {
-                                                                id: node.ID + "a",
-                                                                weight: 1,
-                                                                source: node.AccountDomain,
-                                                                target: node.AccountName,
-                                                                label: "",
+                                                                id: node.AccountDomain,
+                                                                label: node.AccountDomain,
+                                                                shape: "diamond"
                                                         }
-                                                })
-
-                                                //user to process
-                                                edges.push({
+                                                }
+                                        )   
+                                        nodesObj[node.AccountName] = {
+                                                data: {
+                                                        id: node.AccountName,
+                                                        label: node.AccountName,
+                                                        shape: "circle"
+                                                }
+                                        }
+                                        nodes.push(
+                                                {
                                                         data: {
-                                                                id: node.ID + "b",
-                                                                weight: 1,
-                                                                source: node.AccountName,
-                                                                target: node.ProcessName,
-                                                                label: "",
+                                                                id: node.AccountName,
+                                                                label: node.AccountName,
+                                                                shape: "circle"
                                                         }
-                                                })                                        
-
-
-                                                //process to file
-
-                                                edges.push({
+                                                }
+                                        )    
+                                        nodesObj[node.ObjectName] = {
+                                                data: {
+                                                        id: node.ObjectName,
+                                                        label: node.ObjectName,
+                                                        shape: "tag"
+                                                }
+                                        }
+                                        nodes.push(
+                                                {
                                                         data: {
-                                                                id: node.ID + "c",
-                                                                weight: 1,
-                                                                source: node.ProcessName,
-                                                                target: node.ObjectName,
-                                                                label: "",
+                                                                id: node.ObjectName,
+                                                                label: node.ObjectName,
+                                                                shape: "tag"
                                                         }
-                                                })        
+                                                }
+                                        )
+
+                                        //need to refactor this similar to above..
+                                        edges.push({
+                                                data: {
+                                                        id: node.ID + "a",
+                                                        weight: 1,
+                                                        source: node.AccountDomain,
+                                                        target: node.AccountName,
+                                                        label: "",
+                                                }
                                         })
+                                }
+                                if ( node.EventID == "4663" &&  !nodesObj.hasOwnProperty(node.ProcessName) ) {
+                                        nodesObj[node.ProcessName] = {
+                                                data: {
+                                                        id: node.ProcessName,
+                                                        label: node.ProcessName,
+                                                        shape: "square"
+                                                }
+                                        }
+                                        nodes.push(
+                                                {
+                                                        data: {
+                                                                id: node.ProcessName,
+                                                                label: node.ProcessName,
+                                                                shape: "square"
+                                                        }
+                                                }
+                                        )
+
+                                        //user to process
+                                        edges.push({
+                                                data: {
+                                                        id: node.ID + "b",
+                                                        weight: 1,
+                                                        source: node.AccountName,
+                                                        target: node.ProcessName,
+                                                        label: "",
+                                                }
+                                        })                                        
+
+
+                                        //process to file
+
+                                        edges.push({
+                                                data: {
+                                                        id: node.ID + "c",
+                                                        weight: 1,
+                                                        source: node.ProcessName,
+                                                        target: node.ObjectName,
+                                                        label: "",
+                                                }
+                                        })     
+                                        console.log("YO")
+                                        console.log(nodes)
+                                        console.log(edges)
 
                                 }
 
 
-
                         })
-                        console.log(nodes)                                
-                        console.log(edges)                                
                    
                         var cy = cytoscape({
                                 container: document.getElementById('cy'),
@@ -153,42 +205,3 @@ xhr.onerror = function() {
         console.log("Network error occurred")
 }
 
-function createNode ( typeOfNode, node ) {
-        if ( typeOfNode == "AccountDomain" ) {
-                return {
-                        data: {
-                                id: node.AccountDomain,
-                                label: node.AccountDomain,
-                                shape: "diamond",
-                        }
-                }
-
-        }
-        if ( typeOfNode == "AccountName" ) {
-                return {
-                        data: {
-                                id: node.AccountName,
-                                label: node.AccountName,
-                                shape: "circle",
-                        }
-                }
-        }    
-        if ( typeOfNode == "ProcessName" ) {
-                return {
-                        data: {
-                                id: node.ProcessName,
-                                label: node.ProcessName,
-                                shape: "square",
-                        }
-                }
-        }   
-        if ( typeOfNode == "ObjectName" ) {
-                return {
-                        data: {
-                                id: node.ObjectName,
-                                label: node.ObjectName,
-                                shape: "tag",
-                        }
-                }
-        }
-}
