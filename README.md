@@ -8,8 +8,9 @@ This project was inspired by learning how attackers move laterally in an environ
 
 ## Tripwire Visualizer
 
-This feature was inspired by the Logontracer project by JPCERTCC. In this example, we have a rogue user that has successfully logged into the win_10 workstation. And from there, the individual accessed the tripwire we planted as password.txt. From a visual standpoint, we can see the lateral movement that took place which eventually lead them to access the tripwire.   
-![image](https://user-images.githubusercontent.com/11414669/149281928-e4baab07-e1de-40dc-b1df-9c0636a8ee6d.png)
+This feature was inspired by the Logontracer project by JPCERTCC. In this example, we have a rogue user that has successfully logged into the win_10 workstation. And from there, the individual accessed the tripwire we planted as password.txt. From a visual standpoint, we can see the lateral movement that took place which eventually lead them to access the tripwire. 
+
+![tripwire](https://user-images.githubusercontent.com/11414669/152615979-63443858-f160-412c-90e6-92ca7429d7e5.png)
 
 ## Plaform support
 
