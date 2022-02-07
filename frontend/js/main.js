@@ -23,7 +23,14 @@ xhr.onload = function() {
                                 edges = [];
 
                         data.forEach( (node, idx) => {
+
+
+                                //creates root and child connections
+                                //account domain --> account name --> process --> file
                                 if ( idx == 0 ) { 
+
+
+                                        //nodesobj keeps track of unique nodes
                                         nodesObj[node.AccountDomain] = {
                                                 data: {
                                                         id: node.AccountDomain,
@@ -31,6 +38,9 @@ xhr.onload = function() {
                                                         shape: "diamond"
                                                 }
                                         }
+
+
+                                        //account domain creation which is root node
                                         nodes.push(
                                                 {
                                                         data: {
@@ -40,6 +50,8 @@ xhr.onload = function() {
                                                         }
                                                 }
                                         )   
+
+                                        //account name creation which is child of root node
                                         nodesObj[node.AccountName] = {
                                                 data: {
                                                         id: node.AccountName,
@@ -56,6 +68,19 @@ xhr.onload = function() {
                                                         }
                                                 }
                                         )    
+
+                                        //create first link from account domain to account name
+                                        edges.push({
+                                                data: {
+                                                        id: node.ID + "a",
+                                                        weight: 1,
+                                                        source: node.AccountDomain,
+                                                        target: node.AccountName,
+                                                        label: "",
+                                                }
+                                        })
+
+                                        //object name creation which is child of account name
                                         nodesObj[node.ObjectName] = {
                                                 data: {
                                                         id: node.ObjectName,
@@ -73,17 +98,9 @@ xhr.onload = function() {
                                                 }
                                         )
 
-                                        //need to refactor this similar to above..
-                                        edges.push({
-                                                data: {
-                                                        id: node.ID + "a",
-                                                        weight: 1,
-                                                        source: node.AccountDomain,
-                                                        target: node.AccountName,
-                                                        label: "",
-                                                }
-                                        })
                                 }
+
+                                //only showing file access events 
                                 if ( node.EventID == "4663" &&  !nodesObj.hasOwnProperty(node.ProcessName) ) {
                                         nodesObj[node.ProcessName] = {
                                                 data: {
@@ -115,7 +132,6 @@ xhr.onload = function() {
 
 
                                         //process to file
-
                                         edges.push({
                                                 data: {
                                                         id: node.ID + "c",
@@ -125,9 +141,6 @@ xhr.onload = function() {
                                                         label: "",
                                                 }
                                         })     
-                                        console.log("YO")
-                                        console.log(nodes)
-                                        console.log(edges)
 
                                 }
 
