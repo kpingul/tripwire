@@ -43,6 +43,8 @@ type EventRecord struct {
   	ProcessName string 
   	ProcessPath string 
   	AccessType string 
+  	OriginAccountName string
+  	OriginAccountDomain string
 }
 
 
@@ -253,10 +255,28 @@ func runAndParseLogonEvents() {
 	var timeStamp = ""
 	var accountDomain = ""
 	var accountName = ""
+	var subjectFlag = true
+	var originAccountName = ""
+	var originAccountDomain = ""
 
 	//scan through output
 	for err == nil {
-		if strings.Contains(line, "Date:") {
+		if strings.Contains(line, "Account Name:")  {
+			var aName = strings.Split(line, "Name:")
+	    		// fmt.Println("Account Name - " + strings.TrimSpace(aName[1]))
+	    		originAccountName = strings.TrimSpace(aName[1])
+	    	} 
+	    	if strings.Contains(line, "Account Domain:")  {
+	    		var aDomain = strings.Split(line, "Domain:")
+	    		//fmt.Println("Account Domain - " + strings.TrimSpace(aDomain[1]))
+	    		originAccountDomain = strings.TrimSpace(aDomain[1])
+
+	    		//set subject flag to stop
+	    		//checking for this 
+			subjectFlag = false
+	    	}
+		
+	    	if strings.Contains(line, "Date:") {
 			var tstamp = strings.Split(line, "Date:")
 	    		// fmt.Println("Date - " + strings.TrimSpace(tstamp[1]))
 	    		timeStamp = strings.TrimSpace(tstamp[1])
@@ -266,12 +286,12 @@ func runAndParseLogonEvents() {
 	    		// fmt.Println("Date - " + strings.TrimSpace(eID[1]))
 	    		eventID = strings.TrimSpace(eID[1])
 	    	} 
-	    	if strings.Contains(line, "Account Name:") && !( strings.Contains(line, "Network Account Name:")) {
+	    	if strings.Contains(line, "Account Name:") && !( strings.Contains(line, "Network Account Name:")) && subjectFlag{
 			var aName = strings.Split(line, "Name:")
 	    		// fmt.Println("Account Name - " + strings.TrimSpace(aName[1]))
 	    		accountName = strings.TrimSpace(aName[1])
 	    	} 
-	    	if strings.Contains(line, "Account Domain:") && !( strings.Contains(line, "Network Account Domain:")) {
+	    	if strings.Contains(line, "Account Domain:") && !( strings.Contains(line, "Network Account Domain:")) && subjectFlag {
 	    		var aDomain = strings.Split(line, "Domain:")
 	    		//fmt.Println("Account Domain - " + strings.TrimSpace(aDomain[1]))
 	    		accountDomain = strings.TrimSpace(aDomain[1])
@@ -293,6 +313,9 @@ func runAndParseLogonEvents() {
 		    			timeStamp,
 		    			accountName,
 		    			accountDomain,
+		    			originAccountName,
+		    			originAccountDomain,
+
 		    		)
 	    		}
 
@@ -333,13 +356,15 @@ func storeFileAccessRecord (eventID string, timeStamp string,  accountName strin
 
 }
 
-func storeAccountLogonRecord (eventID string, timeStamp string,  accountName string, accountDomain string ) {
+func storeAccountLogonRecord (eventID string, timeStamp string,  accountName string, accountDomain string, originAccountName string, originAccountDomain string ) {
 	fmt.Println("storing event record")
  	record := EventRecord{
  		EventID : eventID,
  		TimeStamp : timeStamp,
 		AccountName: accountName, 
 	  	AccountDomain: accountDomain,
+	  	OriginAccountName: originAccountName,
+	  	OriginAccountDomain: originAccountDomain,
 	}
 
 	fmt.Println(record)
