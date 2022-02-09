@@ -143,6 +143,42 @@ xhr.onload = function() {
                                         })     
 
                                 }
+                                //only showing file access events 
+                                if ( node.EventID == "4624" &&  !nodesObj.hasOwnProperty(node.AccountName) ) {
+                                        nodesObj[node.AccountName] = {
+                                                data: {
+                                                        id: node.AccountName,
+                                                        label: node.AccountName,
+                                                        shape: "circle"
+                                                }
+                                        }
+                                        console.log(nodesObj)
+                                        nodes.push(
+                                                {
+                                                        data: {
+                                                                id: node.AccountName,
+                                                                label: node.AccountName,
+                                                                shape: "circle"
+                                                        }
+                                                }
+                                        )
+
+                                        //user to process
+                                        edges.push({
+                                                data: {
+                                                        id: node.ID + "b",
+                                                        weight: 1,
+                                                        source: node.AccountName,
+                                                        target: node.OriginAccountName,
+                                                        label: node.EventID,
+                                                }
+                                        })                                        
+
+
+                                        
+
+                                }
+                            
 
 
                         })
