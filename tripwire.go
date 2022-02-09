@@ -268,6 +268,7 @@ func runAndParseLogonEvents() {
 			var aName = strings.Split(line, "Name:")
 	    		// fmt.Println("Origin Account Name - " + strings.TrimSpace(aName[1]))
 	    		originAccountName = strings.TrimSpace(aName[1])
+	    		originAccountName = strings.TrimSuffix(originAccountName, "$")
 	    	} 
 	    	if strings.Contains(line, "Account Domain:")  && subjectFlag{
 	    		var aDomain = strings.Split(line, "Domain:")
