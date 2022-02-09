@@ -255,25 +255,28 @@ func runAndParseLogonEvents() {
 	var timeStamp = ""
 	var accountDomain = ""
 	var accountName = ""
-	var subjectFlag = true
 	var originAccountName = ""
 	var originAccountDomain = ""
 
+	//prevents us from having different
+	//account and domain names
+	var subjectFlag = true
+
 	//scan through output
 	for err == nil {
-		if strings.Contains(line, "Account Name:")  {
+		if strings.Contains(line, "Account Name:")  && subjectFlag{
 			var aName = strings.Split(line, "Name:")
-	    		// fmt.Println("Account Name - " + strings.TrimSpace(aName[1]))
+	    		// fmt.Println("Origin Account Name - " + strings.TrimSpace(aName[1]))
 	    		originAccountName = strings.TrimSpace(aName[1])
 	    	} 
-	    	if strings.Contains(line, "Account Domain:")  {
+	    	if strings.Contains(line, "Account Domain:")  && subjectFlag{
 	    		var aDomain = strings.Split(line, "Domain:")
-	    		//fmt.Println("Account Domain - " + strings.TrimSpace(aDomain[1]))
+	    		fmt.Println("Origin Account Domain - " + strings.TrimSpace(aDomain[1]))
 	    		originAccountDomain = strings.TrimSpace(aDomain[1])
 
 	    		//set subject flag to stop
 	    		//checking for this 
-			subjectFlag = false
+	    		subjectFlag = false
 	    	}
 		
 	    	if strings.Contains(line, "Date:") {
@@ -286,14 +289,14 @@ func runAndParseLogonEvents() {
 	    		// fmt.Println("Date - " + strings.TrimSpace(eID[1]))
 	    		eventID = strings.TrimSpace(eID[1])
 	    	} 
-	    	if strings.Contains(line, "Account Name:") && !( strings.Contains(line, "Network Account Name:")) && subjectFlag{
+	    	if strings.Contains(line, "Account Name:") && !strings.Contains(line, "Network Account Name:") && !subjectFlag {
 			var aName = strings.Split(line, "Name:")
 	    		// fmt.Println("Account Name - " + strings.TrimSpace(aName[1]))
 	    		accountName = strings.TrimSpace(aName[1])
 	    	} 
-	    	if strings.Contains(line, "Account Domain:") && !( strings.Contains(line, "Network Account Domain:")) && subjectFlag {
+	    	if strings.Contains(line, "Account Domain:") && !strings.Contains(line, "Network Account Domain:") && !subjectFlag {
 	    		var aDomain = strings.Split(line, "Domain:")
-	    		//fmt.Println("Account Domain - " + strings.TrimSpace(aDomain[1]))
+	    		// fmt.Println("Account Domain - " + strings.TrimSpace(aDomain[1]))
 	    		accountDomain = strings.TrimSpace(aDomain[1])
 	    	}
 
@@ -305,9 +308,13 @@ func runAndParseLogonEvents() {
 	    	} 
 
 	    	if strings.Contains(line, "Network Information:") {
+
+	    		//reset to true for next
+	    		//set of events
+	    		subjectFlag = true
 	    		
 	    		if logonType != "5" &&  logonType != "2" {
-	    			//store records
+	    			// store records
 		    		storeAccountLogonRecord(
 		    			eventID,
 		    			timeStamp,
