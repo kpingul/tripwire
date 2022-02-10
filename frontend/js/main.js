@@ -144,7 +144,8 @@ xhr.onload = function() {
 
                                 }
                                 //only showing file access events 
-                                if ( node.EventID == "4624" &&  !nodesObj.hasOwnProperty(node.AccountName) ) {
+                                if ( node.EventID == "4624" &&  !nodesObj.hasOwnProperty(node.AccountName) 
+                                        node.EventID == "4625" && !nodesObj.hasOwnProperty(node.AccountName) ) {
                                         nodesObj[node.AccountName] = {
                                                 data: {
                                                         id: node.AccountName,
