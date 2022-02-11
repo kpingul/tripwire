@@ -38,7 +38,7 @@ Choose the frequency to check for changes ( in seconds )
 
 #### `--luretype <string>`
 
-Choose file type: PII, CC, or Credentials
+Choose fake file type: PII, CC, or Credentials
 
 #### `--help`
 

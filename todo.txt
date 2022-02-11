@@ -21,7 +21,12 @@ TODO--
 	-4625 Login Failure --DONE
 	-integrate findings to visualizer
 		-Login success - DONE
-		-Login failure - 
+		-Login failure - DONE
 
-6.Serve over HTTPS
+6.Add lure types
+	-fake PII
+	-fake CC
+	-fake Credentials
+
+7.Serve over HTTPS
 	
