@@ -20,6 +20,35 @@ Windows 8/8.1/10
 
 Go version 1.17.6+
 
+## Commands
+
+Usage:
+
+```sh
+go run tripwire.go <flag>
+```
+
+#### `--web <string>`
+
+Yes/no for web server and GUI
+
+#### `--frequency <int>`
+
+Choose the frequency to check for changes ( in seconds )
+
+#### `--luretype <string>`
+
+Choose file type: PII, CC, or Credentials
+
+#### `--help`
+
+Show help
+
+#### `--version`
+
+Show current version
+
+
 ## Notes
 
 A couple of things to note with this project. The UEBA aspect comes from windows security events. These are events that are logged and used for auditing windows systems. Events such as authentication, file integrity, application activity and many others. Since we will be utilizing these events for our UEBA part, the Audit object access policy has to be enabled for our file monitoring module to work properly. Assuming we are in a windows environment with domain controllers and active directories with existing security controls in place, we will assume that this is already enabled. But know that if you're on a windows 10 home version build, this feauture isn't available to edit from what I know, but I might be wrong.      
