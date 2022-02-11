@@ -7,11 +7,14 @@ import (
 	"os/exec"
   	"strings"
   	"log"
+  	"os"
   	"net/http"
   	"encoding/json"
   	"github.com/djherbis/times"
   	"github.com/jasonlvhit/gocron"
   	"github.com/asdine/storm/v3"
+  	"github.com/urfave/cli/v2"
+
 )
 
 
@@ -61,18 +64,59 @@ func main() {
 	}
 
 	defer tripwireDB.Close()
-	
-	//set scheduler
-	gocron.Every(10).Second().Do(checkFileChanges)
 
-	// Start all the pending jobs and block app
-	gocron.Start()
 
-	//setup http web server and API's
-    	fileServer := http.FileServer(http.Dir("./frontend")) 
-    	http.Handle("/", fileServer) 
-	http.HandleFunc("/api/records", getRecords)
-	http.ListenAndServe(":8090", nil)
+	//Initial CLI App Setup
+	app := &cli.App{
+		Name:        "Tripwire",
+		Version:     "0.1.0",
+		Description: "File integrity and Cyber deception tool used to lure attackers",
+		Authors: []*cli.Author{
+			{Name: "KP",},
+		},
+		Flags: []cli.Flag{
+			&cli.StringFlag{Name: "web", Value: "no", Usage: "Enable web server for GUI", Required: false,},
+			&cli.StringFlag{Name: "frequency", Value: "", Usage: "Choose the frequency to check for changes", Required: false,},
+			&cli.StringFlag{Name: "luretype", Value: "", Usage: "Choose file type: PII, CC, or Credentials", Required: false,},
+		},
+		Action: func(c *cli.Context) error {
+			//flag to check if everything checks out
+			webCheck := false 
+
+		    	//input validation checks
+		    	if (c.String("web") == "yes" ) {
+		    		webCheck = true
+		    	} else {
+		    		//add validation checking here..
+		    	}
+
+
+		     	// run if input checks out 
+	     		if webCheck {
+	     			//setup http web server and API's
+			    	fileServer := http.FileServer(http.Dir("./frontend")) 
+			    	http.Handle("/", fileServer) 
+				http.HandleFunc("/api/records", getRecords)
+				http.ListenAndServe(":8090", nil)
+	     		} else {
+			     	//set scheduler
+				gocron.Every(10).Second().Do(checkFileChanges)
+
+				// Start all the pending jobs and block app
+				gocron.Start()
+	     		}
+
+		     	return nil
+	    	},
+	}
+
+
+
+	//Run CLI
+	err := app.Run(os.Args)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 }
 
