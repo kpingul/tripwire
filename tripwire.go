@@ -52,9 +52,6 @@ type EventRecord struct {
 
 
 func main() {
-	generateFakeData("PII")
-	generateFakeData("Credentials")
-	generateFakeData("CC")
 
 	//set last acces time
 	lastAccessTime = time.Now()
@@ -190,7 +187,7 @@ func generateFakeData(typeOfData string) {
 			} 
 
 		case "Credentials":
-			//create fake PII (5) 
+			//create fake Credentials (5) 
 			//write to file
 			for i := 0; i < 5 ; i++ {
 				writeFakeDataPCredentialsToFile(file, gofakeit.Username(), gofakeit.Password(false, true, false, false, false, 32))
