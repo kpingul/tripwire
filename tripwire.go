@@ -14,7 +14,7 @@ import (
   	"github.com/jasonlvhit/gocron"
   	"github.com/asdine/storm/v3"
   	"github.com/urfave/cli/v2"
-
+  	"github.com/brianvoe/gofakeit/v6"
 )
 
 
@@ -159,6 +159,57 @@ func checkFileChanges() {
     		runAndParseLogonEvents()
     	}
 
+}
+
+func generateFakeData(typeOfData string) {
+
+	//create file
+	file, err := os.Create(typeOfData + ".txt")
+
+    	if err != nil {
+        	log.Fatal(err)
+    	}
+
+    	defer file.Close()
+
+	switch typeOfData {
+		case "CC":
+			//create fake credit card numbers (5) 
+			//write to file
+			for i := 0; i < 5 ; i++ {
+				writeFakeDataToFile(file, gofakeit.CreditCard())
+			} 
+		case "PII":
+
+		case "Credentials":
+		
+		default:
+
+		return
+	}
+
+}
+
+func writeFakeDataToFile(file *os.File, cc *gofakeit.CreditCardInfo) {
+
+    	_, err2 := file.WriteString(cc.Type + "\n")
+    	if err2 != nil {
+        	log.Fatal(err2)
+    	}
+    	_, err3 := file.WriteString(cc.Number + "\n")
+    	if err3 != nil {
+        	log.Fatal(err3)
+    	}
+
+    	_, err4 := file.WriteString(cc.Exp + "\n")
+    	if err4 != nil {
+        	log.Fatal(err4)
+    	} 
+
+    	_, err5 := file.WriteString(cc.Cvv + "\n")
+    	if err5 != nil {
+        	log.Fatal(err5)
+    	}
 }
 
 func runAndParseFileAccessEvents() {
