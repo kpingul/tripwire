@@ -24,9 +24,10 @@ TODO--
 		-Login failure - DONE
 
 6.Add lure types
-	-fake PII
-	-fake CC
-	-fake Credentials
+	-fake PII -- DONE
+	-fake CC -- DONE
+	-fake Credentials -- DONE
+	-integrate into CLI
 
 7.Serve over HTTPS
 	
