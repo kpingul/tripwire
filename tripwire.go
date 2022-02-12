@@ -177,11 +177,21 @@ func generateFakeData(typeOfData string) {
 			//create fake credit card numbers (5) 
 			//write to file
 			for i := 0; i < 5 ; i++ {
-				writeFakeDataToFile(file, gofakeit.CreditCard())
+				writeFakeCCDataToFile(file, gofakeit.CreditCard())
 			} 
 		case "PII":
+			//create fake PII (5) 
+			//write to file
+			for i := 0; i < 5 ; i++ {
+				writeFakeDataPIIToFile(file, gofakeit.Person())
+			} 
 
 		case "Credentials":
+			//create fake PII (5) 
+			//write to file
+			for i := 0; i < 5 ; i++ {
+				writeFakeDataPCredentialsToFile(file, gofakeit.Username(), gofakeit.Password(false, true, false, false, false, 32))
+			} 
 		
 		default:
 
@@ -190,7 +200,7 @@ func generateFakeData(typeOfData string) {
 
 }
 
-func writeFakeDataToFile(file *os.File, cc *gofakeit.CreditCardInfo) {
+func writeFakeCCDataToFile(file *os.File, cc *gofakeit.CreditCardInfo) {
 
     	_, err2 := file.WriteString(cc.Type + "\n")
     	if err2 != nil {
@@ -210,6 +220,39 @@ func writeFakeDataToFile(file *os.File, cc *gofakeit.CreditCardInfo) {
     	if err5 != nil {
         	log.Fatal(err5)
     	}
+}
+func writeFakeDataPIIToFile(file *os.File, person *gofakeit.PersonInfo) {
+
+    	_, err2 := file.WriteString(person.FirstName + "\n")
+    	if err2 != nil {
+        	log.Fatal(err2)
+    	}
+    	_, err3 := file.WriteString(person.LastName + "\n")
+    	if err3 != nil {
+        	log.Fatal(err3)
+    	}
+
+    	_, err4 := file.WriteString(person.Gender + "\n")
+    	if err4 != nil {
+        	log.Fatal(err4)
+    	} 
+
+    	_, err5 := file.WriteString(person.SSN + "\n")
+    	if err5 != nil {
+        	log.Fatal(err5)
+    	}
+}
+func writeFakeDataPCredentialsToFile(file *os.File, username string, password string) {
+
+    	_, err2 := file.WriteString("Username - " + username + "\n")
+    	if err2 != nil {
+        	log.Fatal(err2)
+    	}
+    	_, err3 := file.WriteString("Password - " + password + "\n")
+    	if err3 != nil {
+        	log.Fatal(err3)
+    	}
+
 }
 
 func runAndParseFileAccessEvents() {
