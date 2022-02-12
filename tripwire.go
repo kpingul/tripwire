@@ -52,6 +52,9 @@ type EventRecord struct {
 
 
 func main() {
+	generateFakeData("PII")
+	generateFakeData("Credentials")
+	generateFakeData("CC")
 
 	//set last acces time
 	lastAccessTime = time.Now()
@@ -202,55 +205,23 @@ func generateFakeData(typeOfData string) {
 
 func writeFakeCCDataToFile(file *os.File, cc *gofakeit.CreditCardInfo) {
 
-    	_, err2 := file.WriteString(cc.Type + "\n")
-    	if err2 != nil {
-        	log.Fatal(err2)
-    	}
-    	_, err3 := file.WriteString(cc.Number + "\n")
-    	if err3 != nil {
-        	log.Fatal(err3)
-    	}
-
-    	_, err4 := file.WriteString(cc.Exp + "\n")
-    	if err4 != nil {
-        	log.Fatal(err4)
-    	} 
-
-    	_, err5 := file.WriteString(cc.Cvv + "\n")
-    	if err5 != nil {
-        	log.Fatal(err5)
+    	_, errWrite := file.WriteString(cc.Type + "\n" + cc.Number + "\n" + cc.Exp + "\n" + cc.Cvv + "\n")
+    	if errWrite != nil {
+        	log.Fatal(errWrite)
     	}
 }
 func writeFakeDataPIIToFile(file *os.File, person *gofakeit.PersonInfo) {
 
-    	_, err2 := file.WriteString(person.FirstName + "\n")
-    	if err2 != nil {
-        	log.Fatal(err2)
-    	}
-    	_, err3 := file.WriteString(person.LastName + "\n")
-    	if err3 != nil {
-        	log.Fatal(err3)
-    	}
-
-    	_, err4 := file.WriteString(person.Gender + "\n")
-    	if err4 != nil {
-        	log.Fatal(err4)
-    	} 
-
-    	_, err5 := file.WriteString(person.SSN + "\n")
-    	if err5 != nil {
-        	log.Fatal(err5)
+    	_, errWrite := file.WriteString(person.FirstName + " " + person.LastName + "\n" + person.Gender + "\n" + person.SSN + "\n")
+    	if errWrite != nil {
+        	log.Fatal(errWrite)
     	}
 }
 func writeFakeDataPCredentialsToFile(file *os.File, username string, password string) {
-
-    	_, err2 := file.WriteString("Username - " + username + "\n")
-    	if err2 != nil {
-        	log.Fatal(err2)
-    	}
-    	_, err3 := file.WriteString("Password - " + password + "\n")
-    	if err3 != nil {
-        	log.Fatal(err3)
+   
+    	_, errWrite := file.WriteString("Username - " + username + "\n" + "Password - " + password + "\n")
+    	if errWrite != nil {
+        	log.Fatal(errWrite)
     	}
 
 }
