@@ -27,7 +27,7 @@ TODO--
 	-fake PII -- DONE
 	-fake CC -- DONE
 	-fake Credentials -- DONE
-	-integrate into CLI
+	-integrate into CLI -- DONE
 
 7.Serve over HTTPS
 	
