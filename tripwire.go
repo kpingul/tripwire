@@ -76,11 +76,13 @@ func main() {
 		},
 		Flags: []cli.Flag{
 			&cli.StringFlag{Name: "web", Value: "no", Usage: "Enable web server for GUI", Required: false,},
-			&cli.StringFlag{Name: "frequency", Value: "", Usage: "Choose the frequency to check for changes", Required: false,},
+			&cli.StringFlag{Name: "frequency", Value: "30", Usage: "Choose the frequency to check for changes", Required: false,},
 			&cli.StringFlag{Name: "luretype", Value: "", Usage: "Choose file type: PII, CC, or Credentials", Required: false,},
 		},
 		Action: func(c *cli.Context) error {
+			
 			//flag to check if everything checks out
+			valChecks := true
 			webCheck := false 
 
 		    	//input validation checks
@@ -88,6 +90,11 @@ func main() {
 		    		webCheck = true
 		    	} else {
 		    		//add validation checking here..
+		    		if strings.ToLower(c.String("luretype")) != "pii" && strings.ToLower(c.String("luretype")) != "pii" && strings.ToLower(c.String("luretype")) != "credentials" {
+			     		fmt.Println("Invalid luretype")
+			     		valChecks = false
+			     	}
+
 		    	}
 
 
@@ -99,11 +106,16 @@ func main() {
 				http.HandleFunc("/api/records", getRecords)
 				http.ListenAndServe(":8090", nil)
 	     		} else {
-			     	//set scheduler
-				gocron.Every(10).Second().Do(checkFileChanges)
+	     			if valChecks {
+				     	//set scheduler
+					gocron.Every(c.Uint64("frequency")).Second().Do(checkFileChanges)
 
-				// Start all the pending jobs and block app
-				gocron.Start()
+					// Start all the pending jobs and block app
+					<- gocron.Start()
+	     			} else {
+	     				fmt.Println("stop program..")
+			     		return nil
+	     			}
 	     		}
 
 		     	return nil
