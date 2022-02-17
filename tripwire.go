@@ -24,6 +24,7 @@ var (
 	tripwireDB *storm.DB
 	errDB error
 	runningState = false
+	lureType string
 )
 
 const (
@@ -84,15 +85,21 @@ func main() {
 			//flag to check if everything checks out
 			valChecks := true
 			webCheck := false 
+			lureType = c.String("luretype")
 
 		    	//input validation checks
 		    	if (c.String("web") == "yes" ) {
 		    		webCheck = true
 		    	} else {
 		    		//add validation checking here..
-		    		if strings.ToLower(c.String("luretype")) != "pii" && strings.ToLower(c.String("luretype")) != "pii" && strings.ToLower(c.String("luretype")) != "credentials" {
+			     	if lureType == "" {
 			     		fmt.Println("Invalid luretype")
 			     		valChecks = false
+			     	} else {
+				    	if strings.ToLower(lureType) != "pii" && strings.ToLower(lureType) != "pii" && strings.ToLower(lureType) != "credentials" {
+				     		fmt.Println("Invalid luretype")
+				     		valChecks = false
+				     	}
 			     	}
 
 		    	}
@@ -152,9 +159,8 @@ func getRecords(w http.ResponseWriter, req *http.Request) {
 
 func checkFileChanges() {
 	fmt.Println("checkFileChanges...")
-	
 
-	fileStat, err := times.Stat("./test.txt")
+	fileStat, err := times.Stat("./" + lureType + ".txt")
   	if err != nil {
     		fmt.Println(err.Error())
   	}
@@ -390,7 +396,7 @@ func runAndParseLogonEvents() {
 	    	} 
 	    	if strings.Contains(line, "Account Domain:")  && subjectFlag{
 	    		var aDomain = strings.Split(line, "Domain:")
-	    		fmt.Println("Origin Account Domain - " + strings.TrimSpace(aDomain[1]))
+	    		// fmt.Println("Origin Account Domain - " + strings.TrimSpace(aDomain[1]))
 	    		originAccountDomain = strings.TrimSpace(aDomain[1])
 
 	    		//set subject flag to stop
@@ -492,8 +498,6 @@ func storeAccountLogonRecord (eventID string, timeStamp string,  accountName str
 	  	OriginAccountName: originAccountName,
 	  	OriginAccountDomain: originAccountDomain,
 	}
-
-	fmt.Println(record)
 
 	//store in db
 	errSave := tripwireDB.Save(&record)
