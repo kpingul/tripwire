@@ -31,6 +31,19 @@ TODO--
 
 7.Integrate lures to be monitored -- DONE
 
+8.Issues with event log findings
+	-it is capturing and storing all findings 
+	-need to do a match check against the selected lure and the event log files
+		example
+			1. Create PII lure
+			2. Lure is triggered
+			3. Parse windows event logs
+			4. Compare current lure against the event log files
+			5. Filter matches only
+
+			Comments: doing a check against using file name? absolute directory?
+
+
 8.Add lure to frontend
 
 9.Serve over HTTPS
