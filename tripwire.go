@@ -85,7 +85,7 @@ func main() {
 			//flag to check if everything checks out
 			valChecks := true
 			webCheck := false 
-			lureType = c.String("luretype")
+			lureType = strings.ToLower(c.String("luretype"))
 
 		    	//input validation checks
 		    	if (c.String("web") == "yes" ) {
@@ -96,7 +96,7 @@ func main() {
 			     		fmt.Println("Invalid luretype")
 			     		valChecks = false
 			     	} else {
-				    	if strings.ToLower(lureType) != "pii" && strings.ToLower(lureType) != "pii" && strings.ToLower(lureType) != "credentials" {
+				    	if lureType != "pii" && lureType != "pii" && lureType != "credentials" {
 				     		fmt.Println("Invalid luretype")
 				     		valChecks = false
 				     	}
@@ -114,6 +114,9 @@ func main() {
 				http.ListenAndServe(":8090", nil)
 	     		} else {
 	     			if valChecks {
+	     				//create fake data
+	     				generateFakeData(lureType)
+
 				     	//set scheduler
 					gocron.Every(c.Uint64("frequency")).Second().Do(checkFileChanges)
 
@@ -191,20 +194,20 @@ func generateFakeData(typeOfData string) {
     	defer file.Close()
 
 	switch typeOfData {
-		case "CC":
+		case "cc":
 			//create fake credit card numbers (5) 
 			//write to file
 			for i := 0; i < 5 ; i++ {
 				writeFakeCCDataToFile(file, gofakeit.CreditCard())
 			} 
-		case "PII":
+		case "pii":
 			//create fake PII (5) 
 			//write to file
 			for i := 0; i < 5 ; i++ {
 				writeFakeDataPIIToFile(file, gofakeit.Person())
 			} 
 
-		case "Credentials":
+		case "credentials":
 			//create fake Credentials (5) 
 			//write to file
 			for i := 0; i < 5 ; i++ {
