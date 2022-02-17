@@ -29,9 +29,9 @@ TODO--
 	-fake Credentials -- DONE
 	-integrate into CLI -- DONE
 
-7.Integrate lures to be monitored
-	-remove existing test file
-	-store lures in DB
+7.Integrate lures to be monitored -- DONE
 
-7.Serve over HTTPS
+8.Add lure to frontend
+
+9.Serve over HTTPS
 	
