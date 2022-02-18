@@ -190,15 +190,28 @@ func checkFileChanges() {
 func setLureFile(lureType string) {
 	switch lureType {
 		case "cc":
-			lureFile = "CC"
+			lureFile = "CC.txt"
 		case "pii":
-			lureFile = "PII"
+			lureFile = "PII.txt"
 		case "credentials":
-			lureFile = "Credentials"
+			lureFile = "Credentials.txt"
 		default:
 
 		return
 	}
+}
+func checkLureFile( eventFile string ) bool{
+	switch eventFile {
+		case "CC.txt":
+			return true
+		case "PII.txt":
+			return true
+		case "Credentials.txt":
+			return true
+		return false 
+	}
+
+	return false
 }
 
 func generateFakeData(typeOfData string) {
@@ -338,7 +351,7 @@ func runAndParseFileAccessEvents() {
 
 		    		//only intreseted in file types and not our own application since it
 		    		//does the checking of the file itself
-		    		if objectType == "File" && processName != "tripwire.exe" {
+		    		if objectType == "File" && processName != "tripwire.exe" && checkLureFile(objectName) {
 
 		    			//store records
 			    		storeFileAccessRecord(
