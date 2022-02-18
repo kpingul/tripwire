@@ -25,6 +25,7 @@ var (
 	errDB error
 	runningState = false
 	lureType string
+	lureFile string
 )
 
 const (
@@ -87,6 +88,7 @@ func main() {
 			webCheck := false 
 			lureType = strings.ToLower(c.String("luretype"))
 
+
 		    	//input validation checks
 		    	if (c.String("web") == "yes" ) {
 		    		webCheck = true
@@ -116,6 +118,9 @@ func main() {
 	     			if valChecks {
 	     				//create fake data
 	     				generateFakeData(lureType)
+
+	     				//set lure file
+	     				setLureFile(lureType)
 
 				     	//set scheduler
 					gocron.Every(c.Uint64("frequency")).Second().Do(checkFileChanges)
@@ -180,6 +185,20 @@ func checkFileChanges() {
     		runAndParseLogonEvents()
     	}
 
+}
+
+func setLureFile(lureType string) {
+	switch lureType {
+		case "cc":
+			lureFile = "CC"
+		case "pii":
+			lureFile = "PII"
+		case "credentials":
+			lureFile = "Credentials"
+		default:
+
+		return
+	}
 }
 
 func generateFakeData(typeOfData string) {
