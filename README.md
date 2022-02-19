@@ -30,7 +30,7 @@ go run tripwire.go <flag>
 
 #### `--web <string>`
 
-Yes/no for web server and GUI
+Yes/no for web server and GUI ( localhost:8090 )
 
 #### `--frequency <int>`
 
