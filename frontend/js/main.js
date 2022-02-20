@@ -1,4 +1,5 @@
 const API_RECORDS = "http://127.0.0.1:8090/api/records"
+const API_LURE = "http://127.0.0.1:8090/api/lure"
 
 //create XMLHttpRequest object
 const xhr = new XMLHttpRequest()
