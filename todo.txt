@@ -31,7 +31,7 @@ TODO--
 
 7.Integrate lures to be monitored -- DONE
 
-8.Issues with event log findings
+8.Issues with event log findings -- DONE
 	-it is capturing and storing all findings 
 	-need to do a match check against the selected lure and the event log files
 		example
