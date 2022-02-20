@@ -52,6 +52,11 @@ type EventRecord struct {
   	OriginAccountDomain string
 }
 
+type Lure struct {
+	Type string
+	File string
+}
+
 
 func main() {
 
@@ -113,6 +118,7 @@ func main() {
 			    	fileServer := http.FileServer(http.Dir("./frontend")) 
 			    	http.Handle("/", fileServer) 
 				http.HandleFunc("/api/records", getRecords)
+				http.HandleFunc("/api/lure", getLureRecord)
 				http.ListenAndServe(":8090", nil)
 	     		} else {
 	     			if valChecks {
@@ -161,6 +167,19 @@ func getRecords(w http.ResponseWriter, req *http.Request) {
 	w.Write(jsonData)
    	
 }
+func getLureRecord(w http.ResponseWriter, req *http.Request) {
+	record := Lure{
+		Type: getLureType,
+		File: getLureFile,
+	}
+	jsonData, err := json.Marshal(record)
+	if err != nil {
+	    log.Fatal(err)
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsonData)
+   	
+}
 
 
 /* Utility */
@@ -199,6 +218,12 @@ func setLureFile(lureType string) {
 
 		return
 	}
+}
+func getLureFile() string{
+	return lureFile
+}
+func getLureType() string{
+	return lureType
 }
 func checkLureFile( eventFile string ) bool{
 	switch eventFile {
@@ -556,3 +581,4 @@ func getAllEventRecords () []EventRecord{
 	}
 
 }
+
