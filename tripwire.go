@@ -169,8 +169,8 @@ func getRecords(w http.ResponseWriter, req *http.Request) {
 }
 func getLureRecord(w http.ResponseWriter, req *http.Request) {
 	record := Lure{
-		Type: getLureType,
-		File: getLureFile,
+		Type: getLureType(),
+		File: getLureFile(),
 	}
 	jsonData, err := json.Marshal(record)
 	if err != nil {
