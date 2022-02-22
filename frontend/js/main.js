@@ -1,3 +1,4 @@
+//APIS
 const API_RECORDS = "http://127.0.0.1:8090/api/records"
 const API_LURE = "http://127.0.0.1:8090/api/lure"
 
@@ -144,7 +145,7 @@ xhr.onload = function() {
                                         })     
 
                                 }
-                                //only showing file access events 
+                                //only showing logon events either success or failed 
                                 if ( node.EventID == "4624" &&  !nodesObj.hasOwnProperty(node.AccountName) && 
                                         node.EventID == "4625" && !nodesObj.hasOwnProperty(node.AccountName) ) {
                                         nodesObj[node.AccountName] = {
