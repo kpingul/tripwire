@@ -45,7 +45,8 @@ TODO--
 
 
 8.Add lure to frontend
-	-highlight the path visually to show the attack path 
+	-highlight the path visually to show the attack path --done 
+	-highlight account logons 
 
 9.Serve over HTTPS
 	
