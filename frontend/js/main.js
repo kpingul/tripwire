@@ -20,7 +20,9 @@ xhr.onload = function() {
                 console.log(data)
 
                 if ( data.length > 0 ) {
-                        var     nodesObj = {},
+                        var     
+                                rootNode = {},
+                                nodesObj = {},
                                 nodes = [],
                                 edges = [];
 
@@ -40,6 +42,15 @@ xhr.onload = function() {
                                                         shape: "diamond"
                                                 }
                                         }
+
+                                        rootNode = {
+                                                data: {
+                                                        id: node.AccountDomain,
+                                                        label: node.AccountDomain,
+                                                        shape: "diamond"
+                                                }
+                                        }
+
 
 
                                         //account domain creation which is root node
@@ -232,7 +243,8 @@ xhr.onload = function() {
                                         }
                                 });
 
-                        var bfs = cy.elements().bfs('#a', function(){}, true);
+
+                        var bfs = cy.elements().bfs('#' + rootNode.data.id, function(){}, true);
 
                         var i = 0;
                         var highlightNextEle = function(){
