@@ -20,7 +20,7 @@ xhr.onload = function() {
                 console.log(data)
 
                 if ( data.length > 0 ) {
-                        var     
+                        let     
                                 rootNode = {},
                                 nodesObj = {},
                                 nodes = [],
@@ -197,7 +197,7 @@ xhr.onload = function() {
 
                         })
                    
-                        var cy = cytoscape({
+                        let cy = cytoscape({
                                 container: document.getElementById('cy'),
                                 boxSelectionEnabled: false,
                                 autounselectify: true,
@@ -244,10 +244,10 @@ xhr.onload = function() {
                                 });
 
 
-                        var bfs = cy.elements().bfs('#' + rootNode.data.id, function(){}, true);
+                        let bfs = cy.elements().bfs('#' + rootNode.data.id, function(){}, true);
 
-                        var i = 0;
-                        var highlightNextEle = function(){
+                        let i = 0;
+                        let highlightNextEle = function(){
                                 if( i < bfs.path.length ){
                                         bfs.path[i].addClass('highlighted');
                                         i++;
