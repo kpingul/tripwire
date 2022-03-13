@@ -8,6 +8,7 @@ import (
   	"strings"
   	"log"
   	"os"
+  	"os/user"
   	"net/http"
   	"encoding/json"
   	"github.com/djherbis/times"
@@ -23,9 +24,12 @@ var (
 	lastAccessTime time.Time
 	tripwireDB *storm.DB
 	errDB error
+	errHostName error
 	runningState = false
 	lureType string
 	lureFile string
+	HOSTNAME string
+	USERNAME string
 )
 
 const (
@@ -59,6 +63,22 @@ type Lure struct {
 
 
 func main() {
+
+	//get/set current hostname
+	HOSTNAME, errHostName = os.Hostname()
+	if errHostName != nil {
+		panic(errHostName)
+	}
+
+	//get current user
+	user, errUSER := user.Current()
+	if errUSER != nil {
+		panic(errUSER)
+	}
+
+	//set current user
+	USERNAME = strings.Split(user.Username, "\\")[1]
+
 
 	//set last acces time
 	lastAccessTime = time.Now()
@@ -250,6 +270,12 @@ func generateFakeData(typeOfData string) {
 
     	defer file.Close()
 
+    	 // using the function
+    	currDir, err := os.Getwd()
+    	if err != nil {
+        	fmt.Println(err)
+    	}
+
 	switch typeOfData {
 		case "cc":
 			//create fake credit card numbers (5) 
@@ -257,12 +283,14 @@ func generateFakeData(typeOfData string) {
 			for i := 0; i < 5 ; i++ {
 				writeFakeCCDataToFile(file, gofakeit.CreditCard())
 			} 
+			storeLureToDB(currDir + "\\" + typeOfData + ".txt", "CC.txt")
 		case "pii":
 			//create fake PII (5) 
 			//write to file
 			for i := 0; i < 5 ; i++ {
 				writeFakeDataPIIToFile(file, gofakeit.Person())
 			} 
+			storeLureToDB(currDir + "\\" + typeOfData + ".txt", "PII.txt")
 
 		case "credentials":
 			//create fake Credentials (5) 
@@ -270,6 +298,7 @@ func generateFakeData(typeOfData string) {
 			for i := 0; i < 5 ; i++ {
 				writeFakeDataPCredentialsToFile(file, gofakeit.Username(), gofakeit.Password(false, true, false, false, false, 32))
 			} 
+			storeLureToDB(currDir + "\\" + typeOfData + ".txt", "Credentials.txt")
 		
 		default:
 
@@ -565,6 +594,28 @@ func storeAccountLogonRecord (eventID string, timeStamp string,  accountName str
 		log.Fatal(errSave)
 	}
 
+}
+
+func storeLureToDB (filepath string, fileName string) {
+	fmt.Println("storing event record")
+	timeStamp := time.Now()
+ 	record := EventRecord{
+ 		EventID : "4663",
+ 		TimeStamp : timeStamp.String(),
+ 		AccountName: USERNAME,
+ 		AccountDomain: HOSTNAME,
+	  	ObjectType: "File",
+	  	ObjectName: fileName,
+	  	ObjectPath: filepath,
+	}
+
+	fmt.Println(record)
+
+	//store in db
+	errSave := tripwireDB.Save(&record)
+	if errSave != nil {
+		log.Fatal(errSave)
+	}
 }
 
 
