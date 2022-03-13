@@ -112,9 +112,8 @@ xhr.onload = function() {
                                         )
 
                                 }
-
                                 //only showing file access events 
-                                if ( node.EventID == "4663" &&  !nodesObj.hasOwnProperty(node.ProcessName) ) {
+                                if ( node.EventID == "4663" &&  !nodesObj.hasOwnProperty(node.ProcessName) && node.ProcessName !== "") {
                                         nodesObj[node.ProcessName] = {
                                                 data: {
                                                         id: node.ProcessName,
@@ -154,6 +153,24 @@ xhr.onload = function() {
                                                         label: "",
                                                 }
                                         })     
+
+                                }
+                                 //only showing file access events 
+                                if ( node.EventID == "4663" &&  !nodesObj.hasOwnProperty(node.ProcessName) && node.ProcessName == "") {
+                                        console.log("Yo")
+                                        //user to file
+                                        edges.push({
+                                                data: {
+                                                        id: node.ID + "d",
+                                                        weight: 1,
+                                                        source: node.AccountName,
+                                                        target: node.ObjectName,
+                                                        label: "",
+                                                }
+                                        })                                        
+
+
+                                       
 
                                 }
                                 //only showing logon events either success or failed 
@@ -196,7 +213,8 @@ xhr.onload = function() {
 
 
                         })
-                   
+                        console.log(nodes)
+                        console.log(edges)
                         let cy = cytoscape({
                                 container: document.getElementById('cy'),
                                 boxSelectionEnabled: false,
